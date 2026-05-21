@@ -86,8 +86,11 @@ export async function POST(req: NextRequest) {
     });
 
     return response;
-  } catch (error) {
-    console.error("Login error:", error);
+  } catch (error: any) {
+    console.error("Login error full details:", error);
+    if (error instanceof Error) {
+      console.error("Login error stack:", error.stack);
+    }
     return NextResponse.json({ error: "Login failed" }, { status: 500 });
   }
 }
