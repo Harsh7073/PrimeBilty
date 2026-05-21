@@ -1,0 +1,608 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Auth & RBAC ────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  phone         String?
+  password      String
+  avatar        String?
+  isActive      Boolean   @default(true)
+  emailVerified Boolean   @default(false)
+  otp           String?
+  otpExpiry     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  roleId    String
+  role      Role    @relation(fields: [roleId], references: [id])
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
+  branchId  String?
+  branch    Branch?  @relation(fields: [branchId], references: [id])
+
+  printTemplateId String?
+  printTemplate   PrintTemplate? @relation(fields: [printTemplateId], references: [id])
+
+  bilties       Bilty[]
+  invoices      Invoice[]
+  auditLogs     AuditLog[]
+  notifications Notification[]
+  tickets       SupportTicket[]
+  activities    ActivityLog[]
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  users       User[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  module      String
+  action      String
+  description String?
+
+  roles RolePermission[]
+
+  @@unique([module, action])
+}
+
+model RolePermission {
+  id           String @id @default(cuid())
+  roleId       String
+  permissionId String
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+// ─── Company & Branch ────────────────────────────────────────────────────────
+
+model Company {
+  id          String   @id @default(cuid())
+  name        String
+  gstin       String?
+  pan         String?
+  address     String?
+  city        String?
+  state       String?
+  pincode     String?
+  phone       String?
+  email       String?
+  website     String?
+  logo        String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users    User[]
+  branches Branch[]
+  vehicles Vehicle[]
+  parties  Party[]
+  bilties  Bilty[]
+  invoices Invoice[]
+}
+
+model Branch {
+  id        String   @id @default(cuid())
+  name      String
+  code      String?
+  address   String?
+  city      String?
+  state     String?
+  phone     String?
+  managerId String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  users   User[]
+  bilties Bilty[]
+}
+
+// ─── Masters ─────────────────────────────────────────────────────────────────
+
+model VehicleType {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  vehicles Vehicle[]
+}
+
+model Vehicle {
+  id              String    @id @default(cuid())
+  vehicleNumber   String    @unique
+  vehicleTypeId   String
+  make            String?
+  model           String?
+  year            Int?
+  capacity        Float?
+  capacityUnit    String?
+  rcNumber        String?
+  rcExpiry        DateTime?
+  insuranceNumber String?
+  insuranceExpiry DateTime?
+  fitnessExpiry   DateTime?
+  permitExpiry    DateTime?
+  gpsEnabled      Boolean   @default(false)
+  gpsDevice       String?
+  status          String    @default("ACTIVE")
+  photos          String?
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  companyId String
+  company   Company     @relation(fields: [companyId], references: [id])
+  type      VehicleType @relation(fields: [vehicleTypeId], references: [id])
+
+  driverAssignments DriverAssignment[]
+  bilties           Bilty[]
+  trips             Trip[]
+}
+
+model Driver {
+  id             String    @id @default(cuid())
+  name           String
+  phone          String
+  altPhone       String?
+  licenseNumber  String?
+  licenseExpiry  DateTime?
+  aadharNumber   String?
+  address        String?
+  photo          String?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  assignments DriverAssignment[]
+  bilties     Bilty[]
+}
+
+model DriverAssignment {
+  id         String   @id @default(cuid())
+  vehicleId  String
+  driverId   String
+  assignedAt DateTime @default(now())
+  unassignedAt DateTime?
+  isPrimary  Boolean  @default(true)
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+  driver  Driver  @relation(fields: [driverId], references: [id])
+}
+
+model Unit {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  symbol    String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Party {
+  id            String   @id @default(cuid())
+  name          String
+  type          String
+  gstin         String?
+  pan           String?
+  address       String?
+  city          String?
+  state         String?
+  pincode       String?
+  contactPerson String?
+  phone         String?
+  email         String?
+  creditLimit   Float    @default(0)
+  outstanding   Float    @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  consignorBilties  Bilty[]   @relation("ConsignorBilties")
+  consigneeBilties  Bilty[]   @relation("ConsigneeBilties")
+  billingBilties    Bilty[]   @relation("BillingBilties")
+  ledgerEntries     LedgerEntry[]
+  collectionMemos   CollectionMemo[]
+}
+
+model Ledger {
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  description String?
+  openingBalance Float  @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  entries LedgerEntry[]
+}
+
+model LedgerEntry {
+  id          String   @id @default(cuid())
+  ledgerId    String
+  partyId     String?
+  type        String
+  amount      Float
+  description String?
+  reference   String?
+  entryDate   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  ledger Ledger  @relation(fields: [ledgerId], references: [id])
+  party  Party?  @relation(fields: [partyId], references: [id])
+}
+
+// ─── Bilty (LR) ──────────────────────────────────────────────────────────────
+
+model Bilty {
+  id              String    @id @default(cuid())
+  lrNumber        String    @unique
+  lrDate          DateTime  @default(now())
+  fromCity        String
+  toCity          String
+  via             String?
+  vehicleId       String
+  driverId        String?
+  consignorId     String
+  consigneeId     String
+  billingPartyId  String
+  goodsDescription String?
+  quantity        Float?
+  unit            String?
+  weight          Float?
+  weightUnit      String?
+  freightAmount   Float     @default(0)
+  advanceAmount   Float     @default(0)
+  balanceAmount   Float     @default(0)
+  loadingCharges  Float     @default(0)
+  unloadingCharges Float    @default(0)
+  otherCharges    Float     @default(0)
+  gstRate         Float     @default(0)
+  gstAmount       Float     @default(0)
+  totalAmount     Float     @default(0)
+  paymentType     String    @default("TO-PAY")
+  eWayBillNumber  String?
+  eWayBillExpiry  DateTime?
+  eWayBillDoc     String?
+  podDoc          String?
+  status          String    @default("ACTIVE")
+  deliveredAt     DateTime?
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  companyId  String
+  branchId   String?
+  createdById String
+
+  company    Company  @relation(fields: [companyId], references: [id])
+  branch     Branch?  @relation(fields: [branchId], references: [id])
+  vehicle    Vehicle  @relation(fields: [vehicleId], references: [id])
+  driver     Driver?  @relation(fields: [driverId], references: [id])
+  consignor  Party    @relation("ConsignorBilties", fields: [consignorId], references: [id])
+  consignee  Party    @relation("ConsigneeBilties", fields: [consigneeId], references: [id])
+  billingParty Party  @relation("BillingBilties", fields: [billingPartyId], references: [id])
+  createdBy  User     @relation(fields: [createdById], references: [id])
+
+  invoiceItems InvoiceItem[]
+  trips        Trip[]
+}
+
+// ─── Trip ─────────────────────────────────────────────────────────────────────
+
+model Trip {
+  id          String    @id @default(cuid())
+  tripNumber  String    @unique
+  vehicleId   String
+  startDate   DateTime
+  endDate     DateTime?
+  fromCity    String
+  toCity      String
+  distance    Float?
+  status      String    @default("PLANNED")
+  startKm     Float?
+  endKm       Float?
+  fuelCost    Float?
+  tollCost    Float?
+  driverPay   Float?
+  otherCost   Float?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+  bilties Bilty[]
+}
+
+// ─── Invoice ─────────────────────────────────────────────────────────────────
+
+model Invoice {
+  id              String    @id @default(cuid())
+  invoiceNumber   String    @unique
+  invoiceDate     DateTime  @default(now())
+  dueDate         DateTime?
+  type            String    @default("FREIGHT")
+  partyName       String
+  partyGstin      String?
+  partyAddress    String?
+  subtotal        Float     @default(0)
+  discountAmount  Float     @default(0)
+  taxableAmount   Float     @default(0)
+  cgst            Float     @default(0)
+  sgst            Float     @default(0)
+  igst            Float     @default(0)
+  totalTax        Float     @default(0)
+  totalAmount     Float     @default(0)
+  paidAmount      Float     @default(0)
+  status          String    @default("UNPAID")
+  notes           String?
+  terms           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  companyId   String
+  createdById String
+
+  company   Company       @relation(fields: [companyId], references: [id])
+  createdBy User          @relation(fields: [createdById], references: [id])
+  items     InvoiceItem[]
+  payments  Payment[]
+}
+
+model InvoiceItem {
+  id          String  @id @default(cuid())
+  invoiceId   String
+  biltyId     String?
+  description String
+  quantity    Float   @default(1)
+  rate        Float
+  amount      Float
+  hsnCode     String?
+  gstRate     Float   @default(0)
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  bilty   Bilty?  @relation(fields: [biltyId], references: [id])
+}
+
+// ─── Payment ──────────────────────────────────────────────────────────────────
+
+model Payment {
+  id            String   @id @default(cuid())
+  invoiceId     String?
+  amount        Float
+  mode          String
+  reference     String?
+  paymentDate   DateTime @default(now())
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  invoice Invoice? @relation(fields: [invoiceId], references: [id])
+}
+
+// ─── Collection Memo ──────────────────────────────────────────────────────────
+
+model CollectionMemo {
+  id         String   @id @default(cuid())
+  memoNumber String   @unique
+  memoDate   DateTime @default(now())
+  partyId    String
+  amount     Float
+  collected  Float    @default(0)
+  pending    Float    @default(0)
+  status     String   @default("PENDING")
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  party Party @relation(fields: [partyId], references: [id])
+}
+
+// ─── Hiring Settlement ────────────────────────────────────────────────────────
+
+model HiringSettlement {
+  id             String   @id @default(cuid())
+  settlementNo   String   @unique
+  vendorName     String
+  vehicleNumber  String
+  fromDate       DateTime
+  toDate         DateTime
+  hireAmount     Float
+  advancePaid    Float    @default(0)
+  deductions     Float    @default(0)
+  netPayable     Float
+  paidAmount     Float    @default(0)
+  balance        Float    @default(0)
+  status         String   @default("PENDING")
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ─── Load Advice ──────────────────────────────────────────────────────────────
+
+model LoadAdvice {
+  id           String   @id @default(cuid())
+  adviceNumber String   @unique
+  adviceDate   DateTime @default(now())
+  vehicleNumber String
+  fromLocation  String
+  toLocation    String
+  material      String?
+  quantity      Float?
+  unit          String?
+  weight        Float?
+  factory       String?
+  dispatchDate  DateTime?
+  status        String   @default("PENDING")
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ─── Expense ──────────────────────────────────────────────────────────────────
+
+model Expense {
+  id          String   @id @default(cuid())
+  category    String
+  description String
+  amount      Float
+  expenseDate DateTime @default(now())
+  reference   String?
+  attachment  String?
+  notes       String?
+  createdAt   DateTime @default(now())
+}
+
+// ─── Notifications & Logs ─────────────────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String   @default("INFO")
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  module    String
+  recordId  String?
+  oldData   String?
+  newData   String?
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String
+  description String
+  module      String
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// ─── Subscription ─────────────────────────────────────────────────────────────
+
+model SubscriptionPlan {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  description  String?
+  price        Float
+  yearlyPrice  Float?
+  features     String
+  maxUsers     Int
+  maxVehicles  Int
+  maxBranches  Int
+  isActive     Boolean  @default(true)
+  isPopular    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id           String   @id @default(cuid())
+  planId       String
+  companyName  String
+  companyEmail String
+  startDate    DateTime @default(now())
+  endDate      DateTime
+  status       String   @default("ACTIVE")
+  amount       Float
+  paymentRef   String?
+  isAnnual     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  plan SubscriptionPlan @relation(fields: [planId], references: [id])
+}
+
+// ─── Support ──────────────────────────────────────────────────────────────────
+
+model SupportTicket {
+  id          String   @id @default(cuid())
+  ticketNo    String   @unique
+  userId      String
+  subject     String
+  description String
+  category    String
+  priority    String   @default("MEDIUM")
+  status      String   @default("OPEN")
+  attachment  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user     User            @relation(fields: [userId], references: [id])
+  messages TicketMessage[]
+}
+
+model TicketMessage {
+  id        String   @id @default(cuid())
+  ticketId  String
+  sender    String
+  message   String
+  attachment String?
+  isStaff   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model PrintTemplate {
+  id          String   @id @default(cuid())
+  designNo    String   @unique
+  designName  String
+  jsonLayout  String   // Store serialized HTML elements config
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       User[]
+}
