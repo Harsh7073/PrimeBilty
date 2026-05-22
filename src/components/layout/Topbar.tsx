@@ -6,6 +6,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const breadcrumbMap: Record<string, string> = {
   dashboard: "Dashboard",
@@ -54,8 +55,10 @@ export function Topbar({ onMenuClick, sidebarCollapsed }: TopbarProps) {
 
   return (
     <header
-      className="fixed top-0 right-0 z-20 h-16 border-b border-white/10 bg-dark-900/80 backdrop-blur-md flex items-center px-4 gap-3"
-      style={{ left: sidebarCollapsed ? 64 : 260, transition: "left 0.2s ease" }}
+      className={cn(
+        "fixed top-0 right-0 z-20 h-16 border-b border-white/10 bg-dark-900/80 backdrop-blur-md flex items-center px-4 gap-3 transition-[left] duration-200 left-0",
+        sidebarCollapsed ? "lg:left-[64px]" : "lg:left-[260px]"
+      )}
     >
       {/* Mobile menu */}
       <button onClick={onMenuClick} className="btn-icon lg:hidden">

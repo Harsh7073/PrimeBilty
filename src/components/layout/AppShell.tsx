@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
-import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -21,16 +21,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         onMenuClick={() => setMobileOpen(true)}
         sidebarCollapsed={sidebarCollapsed}
       />
-      <motion.main
-        animate={{ paddingLeft: sidebarCollapsed ? 64 : 260 }}
-        transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="min-h-screen pt-16 hidden lg:block"
+      <main
+        className={cn(
+          "min-h-screen pt-16 transition-[padding] duration-200 pl-0",
+          sidebarCollapsed ? "lg:pl-[64px]" : "lg:pl-[260px]"
+        )}
       >
-        <div className="p-6">{children}</div>
-      </motion.main>
-      {/* Mobile main (no padding adjustment) */}
-      <main className="lg:hidden min-h-screen pt-16">
-        <div className="p-4">{children}</div>
+        <div className="p-4 lg:p-6">{children}</div>
       </main>
     </div>
   );
