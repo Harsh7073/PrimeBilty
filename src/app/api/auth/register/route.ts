@@ -155,6 +155,7 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (error) {
     console.error("Register error:", error);
-    return NextResponse.json({ error: "Registration failed" }, { status: 500 });
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: `Registration failed: ${errorMsg}` }, { status: 500 });
   }
 }

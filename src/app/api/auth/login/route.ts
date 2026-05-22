@@ -91,6 +91,7 @@ export async function POST(req: NextRequest) {
     if (error instanceof Error) {
       console.error("Login error stack:", error.stack);
     }
-    return NextResponse.json({ error: "Login failed" }, { status: 500 });
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: `Login failed: ${errorMsg}` }, { status: 500 });
   }
 }
