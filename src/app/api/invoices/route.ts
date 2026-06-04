@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
         partyName: data.partyName,
         partyGstin: data.partyGstin,
         partyAddress: data.partyAddress,
-        dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+        dueDate: (data.dueDate && data.dueDate.trim() !== "") ? new Date(data.dueDate) : null,
         subtotal,
         taxableAmount: subtotal,
         totalTax,

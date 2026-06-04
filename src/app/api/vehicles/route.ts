@@ -76,9 +76,9 @@ export async function POST(req: NextRequest) {
     const vehicle = await prisma.vehicle.create({
       data: {
         ...data,
-        rcExpiry: data.rcExpiry ? new Date(data.rcExpiry) : undefined,
-        insuranceExpiry: data.insuranceExpiry ? new Date(data.insuranceExpiry) : undefined,
-        fitnessExpiry: data.fitnessExpiry ? new Date(data.fitnessExpiry) : undefined,
+        rcExpiry: (data.rcExpiry && data.rcExpiry.trim() !== "") ? new Date(data.rcExpiry) : null,
+        insuranceExpiry: (data.insuranceExpiry && data.insuranceExpiry.trim() !== "") ? new Date(data.insuranceExpiry) : null,
+        fitnessExpiry: (data.fitnessExpiry && data.fitnessExpiry.trim() !== "") ? new Date(data.fitnessExpiry) : null,
         companyId: payload.companyId!,
       },
       include: { type: true },

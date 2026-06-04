@@ -50,7 +50,7 @@ export async function PATCH(
 
     const bilty = await prisma.bilty.update({
       where: { id },
-      data: { status, deliveredAt: deliveredAt ? new Date(deliveredAt) : undefined, podDoc, ...rest, updatedAt: new Date() },
+      data: { status, deliveredAt: (deliveredAt && String(deliveredAt).trim() !== "") ? new Date(deliveredAt) : null, podDoc, ...rest, updatedAt: new Date() },
     });
 
     await prisma.activityLog.create({

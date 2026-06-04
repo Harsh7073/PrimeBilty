@@ -32,16 +32,19 @@ export async function PATCH(
   if (!payload) return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 
   const body = await req.json();
+  const updateData: any = {
+    ...body,
+  };
+  if (body.year !== undefined) updateData.year = body.year ? Number(body.year) : null;
+  if (body.capacity !== undefined) updateData.capacity = body.capacity ? Number(body.capacity) : null;
+  if (body.rcExpiry !== undefined) updateData.rcExpiry = (body.rcExpiry && body.rcExpiry.trim() !== "") ? new Date(body.rcExpiry) : null;
+  if (body.insuranceExpiry !== undefined) updateData.insuranceExpiry = (body.insuranceExpiry && body.insuranceExpiry.trim() !== "") ? new Date(body.insuranceExpiry) : null;
+  if (body.fitnessExpiry !== undefined) updateData.fitnessExpiry = (body.fitnessExpiry && body.fitnessExpiry.trim() !== "") ? new Date(body.fitnessExpiry) : null;
+  if (body.permitExpiry !== undefined) updateData.permitExpiry = (body.permitExpiry && body.permitExpiry.trim() !== "") ? new Date(body.permitExpiry) : null;
+
   const vehicle = await prisma.vehicle.update({
     where: { id },
-    data: {
-      ...body,
-      year: body.year ? Number(body.year) : undefined,
-      capacity: body.capacity ? Number(body.capacity) : undefined,
-      rcExpiry: body.rcExpiry ? new Date(body.rcExpiry) : undefined,
-      insuranceExpiry: body.insuranceExpiry ? new Date(body.insuranceExpiry) : undefined,
-      fitnessExpiry: body.fitnessExpiry ? new Date(body.fitnessExpiry) : undefined,
-    },
+    data: updateData,
     include: { type: true },
   });
   return NextResponse.json({ vehicle });
