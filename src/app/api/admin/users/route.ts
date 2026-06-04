@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   if (!payload) return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 
   const users = await prisma.user.findMany({
-    where: { companyId: payload.companyId },
+    where: payload.companyId ? { companyId: payload.companyId } : {},
     include: { role: true, branch: true },
     orderBy: { createdAt: "desc" },
   });

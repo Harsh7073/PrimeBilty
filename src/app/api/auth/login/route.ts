@@ -38,13 +38,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Create session tokens
-    const payload = {
-      userId: user.id,
-      email: user.email,
-      roleId: user.roleId,
-      roleName: user.role.name,
-      companyId: user.companyId || undefined,
-    };
+      const payload = {
+        userId: user.id,
+        email: user.email,
+        roleId: user.roleId,
+        roleName: user.role?.name || '',
+        companyId: user.companyId || undefined,
+      };
 
     const accessToken = signAccessToken(payload);
     const refreshToken = signRefreshToken(payload);
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         phone: user.phone,
         avatar: user.avatar,
         roleId: user.roleId,
-        roleName: user.role.name,
+        roleName: user.role?.name || '',
         companyId: user.companyId,
       },
       token: accessToken,
