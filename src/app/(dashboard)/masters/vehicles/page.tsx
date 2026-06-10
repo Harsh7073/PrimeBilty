@@ -8,6 +8,8 @@ import { Modal } from "@/components/ui/Modal";
 import { formatDate, getStatusColor } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import axios from "axios";
+import { VehicleTypeSelect } from "@/components/ui/VehicleTypeSelect";
+import { UnitSelect } from "@/components/ui/UnitSelect";
 
 const STATUS_COLORS: Record<string, string> = {
   ACTIVE: "badge-green",
@@ -25,7 +27,7 @@ export default function VehiclesPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editVehicle, setEditVehicle] = useState<any>(null);
   const [form, setForm] = useState({
-    vehicleNumber: "", vehicleTypeId: "", make: "", model: "", year: "",
+    vehicleNumber: "", ownerType: "Own", vehicleTypeId: "", make: "", model: "", year: "",
     capacity: "", capacityUnit: "Ton", rcNumber: "", rcExpiry: "",
     insuranceNumber: "", insuranceExpiry: "", fitnessExpiry: "",
     gpsEnabled: false, status: "ACTIVE", notes: "",
@@ -57,6 +59,7 @@ export default function VehiclesPage() {
     if (vehicle) {
       setForm({
         vehicleNumber: vehicle.vehicleNumber || "",
+        ownerType: vehicle.ownerType || "Own",
         vehicleTypeId: vehicle.vehicleTypeId || "",
         make: vehicle.make || "", model: vehicle.model || "",
         year: String(vehicle.year || ""), capacity: String(vehicle.capacity || ""),
@@ -71,7 +74,7 @@ export default function VehiclesPage() {
         notes: vehicle.notes || "",
       });
     } else {
-      setForm({ vehicleNumber: "", vehicleTypeId: "", make: "", model: "", year: "", capacity: "", capacityUnit: "Ton", rcNumber: "", rcExpiry: "", insuranceNumber: "", insuranceExpiry: "", fitnessExpiry: "", gpsEnabled: false, status: "ACTIVE", notes: "" });
+      setForm({ vehicleNumber: "", ownerType: "Own", vehicleTypeId: "", make: "", model: "", year: "", capacity: "", capacityUnit: "Ton", rcNumber: "", rcExpiry: "", insuranceNumber: "", insuranceExpiry: "", fitnessExpiry: "", gpsEnabled: false, status: "ACTIVE", notes: "" });
     }
     setModalOpen(true);
   };
@@ -128,6 +131,14 @@ export default function VehiclesPage() {
     {
       key: "type", label: "Type",
       render: (row: any) => <span className="text-sm text-white/60">{row.type?.name}</span>,
+    },
+    {
+      key: "ownerType", label: "Owner Type",
+      render: (row: any) => (
+        <span className={`badge ${row.ownerType === "Own" ? "badge-blue" : "badge-purple"}`}>
+          {row.ownerType || "Own"}
+        </span>
+      ),
     },
     {
       key: "make", label: "Make/Model",
@@ -241,14 +252,31 @@ export default function VehiclesPage() {
           ].map(({ label, key, placeholder, type = "text" }) => (
             <div key={key}>
               <label className="label-base">{label}</label>
-              <input type={type} value={(form as any)[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} placeholder={placeholder} className="input-base" />
+              {key === "capacityUnit" ? (
+                <UnitSelect
+                  value={(form as any)[key]}
+                  onChange={(val) => setForm({ ...form, [key]: val })}
+                  placeholder={placeholder}
+                />
+              ) : (
+                <input type={type} value={(form as any)[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} placeholder={placeholder} className="input-base" />
+              )}
             </div>
           ))}
           <div>
             <label className="label-base">Vehicle Type *</label>
-            <select value={form.vehicleTypeId} onChange={(e) => setForm({ ...form, vehicleTypeId: e.target.value })} className="select-base">
-              <option value="">Select type...</option>
-              {vehicleTypes.map((t: any) => <option key={t.id} value={t.id}>{t.name}</option>)}
+            <VehicleTypeSelect
+              value={form.vehicleTypeId}
+              onChange={(val) => setForm({ ...form, vehicleTypeId: val })}
+              vehicleTypes={vehicleTypes}
+              required
+            />
+          </div>
+          <div>
+            <label className="label-base">Owner Type *</label>
+            <select value={form.ownerType} onChange={(e) => setForm({ ...form, ownerType: e.target.value })} className="select-base">
+              <option value="Own">Own</option>
+              <option value="Market">Market</option>
             </select>
           </div>
           <div>

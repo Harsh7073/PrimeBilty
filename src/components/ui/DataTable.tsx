@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Search, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ChevronsUpDown, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -49,6 +49,26 @@ export function DataTable<T extends Record<string, any>>({
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [internalPage, setInternalPage] = useState(1);
+
+  // Reset page when search or sort parameters change
+  useEffect(() => {
+    if (onPageChange) {
+      onPageChange(1);
+    } else {
+      setInternalPage(1);
+    }
+  }, [search, sortKey, sortDir, onPageChange]);
+
+  const activePage = onPageChange ? page : internalPage;
+
+  const handlePageChange = (p: number) => {
+    if (onPageChange) {
+      onPageChange(p);
+    } else {
+      setInternalPage(p);
+    }
+  };
 
   const filteredData = useMemo(() => {
     if (!searchable || !search) return data;
@@ -68,6 +88,12 @@ export function DataTable<T extends Record<string, any>>({
       return 0;
     });
   }, [filteredData, sortKey, sortDir]);
+
+  const paginatedData = useMemo(() => {
+    if (total !== undefined) return sortedData;
+    const start = (activePage - 1) * pageSize;
+    return sortedData.slice(start, start + pageSize);
+  }, [sortedData, activePage, pageSize, total]);
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -163,7 +189,7 @@ export function DataTable<T extends Record<string, any>>({
                 </td>
               </tr>
             ) : (
-              sortedData.map((row, i) => (
+              paginatedData.map((row, i) => (
                 <motion.tr
                   key={rowKey ? rowKey(row) : i}
                   initial={{ opacity: 0 }}
@@ -192,26 +218,26 @@ export function DataTable<T extends Record<string, any>>({
       {totalPages > 1 && (
         <div className="px-4 py-3 border-t border-white/10 flex items-center justify-between text-sm">
           <span className="text-white/40 text-xs">
-            Page {page} of {totalPages} {total && `• ${total} total`}
+            Page {activePage} of {totalPages} {total && `• ${total} total`}
           </span>
           <div className="flex items-center gap-1">
             <button
-              onClick={() => onPageChange?.(page - 1)}
-              disabled={page <= 1}
+              onClick={() => handlePageChange(activePage - 1)}
+              disabled={activePage <= 1}
               className="btn-icon disabled:opacity-30"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const p = i + Math.max(1, page - 2);
+              const p = i + Math.max(1, activePage - 2);
               if (p > totalPages) return null;
               return (
                 <button
                   key={p}
-                  onClick={() => onPageChange?.(p)}
+                  onClick={() => handlePageChange(p)}
                   className={cn(
                     "w-8 h-8 rounded-lg text-xs font-medium transition-all",
-                    p === page ? "bg-brand-500/20 text-brand-400 border border-brand-500/30" : "text-white/40 hover:text-white/70 hover:bg-white/5"
+                    p === activePage ? "bg-brand-500/20 text-brand-400 border border-brand-500/30" : "text-white/40 hover:text-white/70 hover:bg-white/5"
                   )}
                 >
                   {p}
@@ -219,8 +245,8 @@ export function DataTable<T extends Record<string, any>>({
               );
             })}
             <button
-              onClick={() => onPageChange?.(page + 1)}
-              disabled={page >= totalPages}
+              onClick={() => handlePageChange(activePage + 1)}
+              disabled={activePage >= totalPages}
               className="btn-icon disabled:opacity-30"
             >
               <ChevronRight className="w-4 h-4" />

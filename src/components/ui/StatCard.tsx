@@ -28,14 +28,14 @@ export function StatCard({ title, value, subtitle, trend, trendLabel, icon, grad
     >
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-medium text-white/40 uppercase tracking-wider">{title}</p>
-          <p className="text-2xl font-bold text-white mt-1 tracking-tight">{value}</p>
-          {subtitle && <p className="text-xs text-white/30 mt-0.5">{subtitle}</p>}
+          <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">{title}</p>
+          <p className="text-2xl font-bold text-slate-800 mt-1 tracking-tight">{value}</p>
+          {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
         </div>
         <div
           className={cn(
             "w-10 h-10 rounded-xl flex-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110",
-            gradient || "bg-brand-500/15"
+            gradient || "bg-brand-500/10"
           )}
         >
           {icon}
@@ -46,12 +46,12 @@ export function StatCard({ title, value, subtitle, trend, trendLabel, icon, grad
         <div className="flex items-center gap-1.5 mt-1">
           <div className={cn(
             "flex items-center gap-1 text-xs font-semibold px-1.5 py-0.5 rounded-md",
-            trendPositive ? "text-emerald-400 bg-emerald-500/10" : trendNegative ? "text-red-400 bg-red-500/10" : "text-white/30 bg-white/5"
+            trendPositive ? "text-brand-500 bg-brand-50" : trendNegative ? "text-purple-500 bg-purple-50" : "text-slate-400 bg-slate-100"
           )}>
             {trendPositive ? <TrendingUp className="w-3 h-3" /> : trendNegative ? <TrendingDown className="w-3 h-3" /> : <Minus className="w-3 h-3" />}
             {Math.abs(trend)}%
           </div>
-          {trendLabel && <span className="text-xs text-white/25">{trendLabel}</span>}
+          {trendLabel && <span className="text-xs text-slate-400">{trendLabel}</span>}
         </div>
       )}
     </motion.div>

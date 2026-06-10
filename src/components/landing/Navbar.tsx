@@ -78,12 +78,12 @@ export default function Navbar() {
           <div className="flex items-center justify-between">
             {/* Left side: Logo */}
             <Link href="#home" onClick={(e) => handleScrollTo(e, "#home")} className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-600/20 group-hover:scale-105 transition-transform duration-300">
-                <Truck className="w-4.5 h-4.5 text-white" />
+              <div className="w-9 h-9 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                <img src="/logo.png" alt="PrimeBilty Logo" className="w-9 h-9 object-contain" />
               </div>
               <div>
-                <span className="font-extrabold text-slate-900 text-lg tracking-tight">
-                  Truck<span className="text-indigo-600">Bilty</span>
+                <span className="font-extrabold text-indigo-600 text-lg tracking-tight">
+                  Prime<span className="text-purple-500">Bilty</span>
                 </span>
                 <span className="hidden sm:inline-block ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-100">
                   v2.0

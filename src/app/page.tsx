@@ -103,7 +103,7 @@ export default function HomePage() {
       {/* Background Gradients & Glows */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] pointer-events-none -z-10 overflow-hidden">
         <div className="absolute top-[-10%] left-[20%] w-[500px] h-[500px] bg-indigo-200/30 rounded-full blur-[120px]" />
-        <div className="absolute top-[10%] right-[10%] w-[400px] h-[400px] bg-amber-100/30 rounded-full blur-[100px]" />
+        <div className="absolute top-[10%] right-[10%] w-[400px] h-[400px] bg-purple-200/20 rounded-full blur-[100px]" />
       </div>
 
       {/* Navigation Header */}
@@ -238,12 +238,12 @@ export default function HomePage() {
                       <div key={v.reg} className="space-y-1">
                         <div className="flex justify-between text-[10px]">
                           <span className="font-mono font-bold text-slate-700">{v.reg} ({v.route})</span>
-                          <span className={`font-bold ${v.status === "On Time" ? "text-green-600" : "text-amber-600"}`}>{v.status}</span>
+                          <span className={`font-bold ${v.status === "On Time" ? "text-indigo-600" : "text-purple-500"}`}>{v.status}</span>
                         </div>
                         <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full bg-gradient-to-r ${
-                              v.status === "On Time" ? "from-indigo-500 to-indigo-600" : "from-amber-400 to-amber-500"
+                              v.status === "On Time" ? "from-indigo-500 to-indigo-600" : "from-purple-500 to-purple-600"
                             }`}
                             style={{ width: `${v.progress}%` }}
                           />
@@ -260,8 +260,8 @@ export default function HomePage() {
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute -top-6 -left-6 bg-white border border-slate-250/80 p-3.5 rounded-2xl shadow-xl flex items-center gap-3 z-10"
               >
-                <div className="w-8 h-8 rounded-lg bg-green-50 border border-green-200 flex items-center justify-center">
-                  <Globe className="w-4 h-4 text-green-600" />
+                <div className="w-8 h-8 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center">
+                  <Globe className="w-4 h-4 text-purple-600" />
                 </div>
                 <div>
                   <div className="text-xs font-bold text-slate-900">Instant WhatsApp</div>
@@ -475,7 +475,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── HOW TRUCKBILTY FIXES IT (PROBLEM / SOLUTION) ── */}
+      {/* ── HOW PRIMEBILTY FIXES IT (PROBLEM / SOLUTION) ── */}
       <section id="details" className="py-20 md:py-28 border-t border-slate-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto space-y-4 mb-20">
@@ -483,7 +483,7 @@ export default function HomePage() {
               Problems vs Solutions
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
-              How TruckBilty <span className="text-indigo-600">Fixes It</span>
+              How PrimeBilty <span className="text-indigo-600">Fixes It</span>
             </h2>
             <p className="text-slate-500 text-base font-medium">
               We replace outdated paper registries and manual calculations with smart, automated digital logs.
@@ -506,7 +506,7 @@ export default function HomePage() {
                 solutionTitle: "Automated Ledger Tracking",
                 solutionDesc: "Log every advance payment and fuel charge directly under the Bilty. Watch the final outstanding balance auto-calculate in real-time.",
                 icon: TrendingUp,
-                accentColor: "border-emerald-200 bg-emerald-50/30"
+                accentColor: "border-purple-200 bg-purple-50/30"
               },
               {
                 problemTitle: "Delayed Invoicing & Auditing",
@@ -514,7 +514,7 @@ export default function HomePage() {
                 solutionTitle: "1-Click Bulk GST Invoices",
                 solutionDesc: "Select multiple loading slips or bilties for a consignor, and watch the system compile a professional GST-compliant invoice in 1 click.",
                 icon: Receipt,
-                accentColor: "border-purple-200 bg-purple-50/30"
+                accentColor: "border-indigo-200 bg-indigo-50/50"
               },
               {
                 problemTitle: "Manual Report Compilation",
@@ -522,7 +522,7 @@ export default function HomePage() {
                 solutionTitle: "Instant Excel & PDF Reports",
                 solutionDesc: "Get instant downloads of tax registers, branch-wise bilty summaries, outstanding ledger books, and driver balance reports in real-time.",
                 icon: Shield,
-                accentColor: "border-amber-200 bg-amber-50/40"
+                accentColor: "border-purple-200 bg-purple-50/40"
               }
             ].map((item, idx) => (
               <div key={idx} className="flex gap-4 md:gap-6">
@@ -532,13 +532,13 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="space-y-4 flex-1">
-                  <div className="border-l-4 border-red-400 pl-4">
+                  <div className="border-l-4 border-purple-400 pl-4">
                     <h4 className="text-sm font-bold text-slate-800 uppercase tracking-wide">{item.problemTitle}</h4>
                     <p className="text-xs text-slate-500 mt-1 leading-relaxed">{item.problemDesc}</p>
                   </div>
-                  <div className={`border-l-4 border-green-500 pl-4 py-2.5 pr-3 rounded-r-lg border ${item.accentColor}`}>
+                  <div className={`border-l-4 border-indigo-500 pl-4 py-2.5 pr-3 rounded-r-lg border ${item.accentColor}`}>
                     <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
-                      <Check className="w-4 h-4 text-green-600 stroke-[3]" />
+                      <Check className="w-4 h-4 text-indigo-600 stroke-[3]" />
                       <span>{item.solutionTitle}</span>
                     </h4>
                     <p className="text-xs text-slate-600 mt-1 leading-relaxed font-medium">{item.solutionDesc}</p>
@@ -588,37 +588,37 @@ export default function HomePage() {
                 icon: Truck,
                 title: "Loading Slip & Advices",
                 desc: "Generate Loading Slips by entering Truck number, Rate, and advance details. Print or WhatsApp to drivers.",
-                color: "text-amber-600 bg-amber-50 border-amber-100",
+                color: "text-indigo-600 bg-indigo-50 border-indigo-100",
               },
               {
                 icon: Shield,
                 title: "Role-Based Access & Branches",
                 desc: "Add multiple branches and set custom user roles. Allow employees to access specific billing or fleet data.",
-                color: "text-emerald-600 bg-emerald-50 border-emerald-100",
+                color: "text-purple-600 bg-purple-50 border-purple-100",
               },
               {
                 icon: Clock,
                 title: "Real-time Tracking",
                 desc: "Add tracking statuses to your vehicles. Keep consignors updated about exact location and ETA automatically.",
-                color: "text-rose-600 bg-rose-50 border-rose-100",
+                color: "text-indigo-600 bg-indigo-50 border-indigo-100",
               },
               {
                 icon: Smartphone,
                 title: "Mobile Friendly Layout",
                 desc: "Access your dashboard from your phone, laptop, or tablet. Easy-to-use layouts built for on-the-go transport managers.",
-                color: "text-cyan-600 bg-cyan-50 border-cyan-100",
+                color: "text-purple-600 bg-purple-50 border-purple-100",
               },
               {
                 icon: Users,
                 title: "Party Ledger Book",
                 desc: "Maintain neat accounts for your regular clients (consignors and consignees) with printable outstanding bills.",
-                color: "text-teal-600 bg-teal-50 border-teal-100",
+                color: "text-indigo-600 bg-indigo-50 border-indigo-100",
               },
               {
                 icon: Building2,
                 title: "GST Auto-fill Masters",
                 desc: "Add consignors and consignees simply by typing their GSTIN. The software automatically fills in names and addresses.",
-                color: "text-blue-600 bg-blue-50 border-blue-100",
+                color: "text-purple-600 bg-purple-50 border-purple-100",
               },
               {
                 icon: MapPin,
@@ -655,7 +655,7 @@ export default function HomePage() {
             Interactive Tour
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
-            See TruckBilty in <span className="text-indigo-600">Action</span>
+            See PrimeBilty in <span className="text-indigo-600">Action</span>
           </h2>
           <p className="text-slate-500 text-sm font-medium">
             Toggle between core modules below to explore our clean, high-performance web interface.
@@ -720,7 +720,7 @@ export default function HomePage() {
             Simple, Transparent <span className="text-indigo-600">Pricing</span>
           </h2>
           <p className="text-slate-500 text-base font-semibold">
-            Truck Bilty offers a 7-day free trial with full access to all features for new registrations. Experience the full benefits before choosing a paid plan.
+            PrimeBilty offers a 7-day free trial with full access to all features for new registrations. Experience the full benefits before choosing a paid plan.
           </p>
         </div>
 
@@ -873,7 +873,7 @@ export default function HomePage() {
               </div>
               
               <p className="text-slate-700 italic text-base md:text-lg leading-relaxed font-semibold max-w-2xl mx-auto">
-                "TruckBilty has simplified our bilty and invoice creation process completely. The interface is clean and easy to use, even for first-time users. It has reduced paperwork errors and improved our overall workflow efficiency."
+                "PrimeBilty has simplified our bilty and invoice creation process completely. The interface is clean and easy to use, even for first-time users. It has reduced paperwork errors and improved our overall workflow efficiency."
               </p>
               
               <div className="pt-4 border-t border-slate-100 flex items-center justify-center gap-3">
@@ -902,8 +902,8 @@ export default function HomePage() {
                 Stop Typing,<br />
                 Start <span className="text-indigo-600">Transporting.</span>
               </h2>
-              <p className="text-slate-650 text-base font-semibold leading-relaxed max-w-lg mx-auto lg:mx-0">
-                Join thousands of transport managers who save hours every week using TruckBilty. Sign up for a free account or get in touch for custom enterprise needs.
+              <p className="text-slate-655 text-base font-semibold leading-relaxed max-w-lg mx-auto lg:mx-0">
+                Join thousands of transport managers who save hours every week using PrimeBilty. Sign up for a free account or get in touch for custom enterprise needs.
               </p>
               
               <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
@@ -1062,11 +1062,11 @@ export default function HomePage() {
             {/* Logo and Tagline */}
             <div className="md:col-span-5 space-y-4">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-                  <Truck className="w-4.5 h-4.5 text-white" />
+                <div className="w-8 h-8 flex items-center justify-center">
+                  <img src="/logo.png" alt="PrimeBilty Logo" className="w-8 h-8 object-contain" />
                 </div>
-                <span className="font-extrabold text-white text-base">
-                  Truck<span className="text-indigo-400">Bilty</span>
+                <span className="font-extrabold text-indigo-400 text-base">
+                  Prime<span className="text-purple-400">Bilty</span>
                 </span>
               </div>
               <p className="text-slate-500 font-semibold leading-relaxed max-w-sm">
@@ -1127,15 +1127,15 @@ export default function HomePage() {
             </div>
             
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[10px]">
-              <a href="https://www.truckbilty.com/terms-and-conditions" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Terms & Conditions</a>
-              <a href="https://www.truckbilty.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="https://www.truckbilty.com/refund-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Refund Policy</a>
-              <a href="https://www.truckbilty.com/account-deletion" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Account Deletion</a>
+              <a href="https://www.primebilty.com/terms-and-conditions" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Terms & Conditions</a>
+              <a href="https://www.primebilty.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Privacy Policy</a>
+              <a href="https://www.primebilty.com/refund-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Refund Policy</a>
+              <a href="https://www.primebilty.com/account-deletion" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Account Deletion</a>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-900 text-[10px] text-slate-650 font-semibold">
-            <p>© {new Date().getFullYear()} TruckBilty. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} PrimeBilty. All rights reserved.</p>
             <p>Designed and Developed by <a href="https://challengetechnolabs.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300">Challenge Technolabs</a></p>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { DataTable } from "@/components/ui/DataTable";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuthStore } from "@/store/authStore";
+import { VehicleTypeIcon } from "@/components/ui/VehicleTypeIcon";
 
 export default function VehicleTypesPage() {
   const { token } = useAuthStore();
@@ -28,7 +29,17 @@ export default function VehicleTypesPage() {
   }, [token]);
 
   const columns = [
-    { key: "name", label: "Type Name", sortable: true },
+    {
+      key: "name",
+      label: "Vehicle Type Name",
+      sortable: true,
+      render: (row: any) => (
+        <div className="flex items-center gap-3 py-1">
+          <VehicleTypeIcon name={row.name} />
+          <span className="font-semibold text-white">{row.name}</span>
+        </div>
+      )
+    },
     { key: "description", label: "Description" },
     { key: "status", label: "Status", render: (row: any) => (
       <span className="badge badge-green">ACTIVE</span>

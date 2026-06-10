@@ -7,7 +7,7 @@ import { Modal } from "@/components/ui/Modal";
 import { useAuthStore } from "@/store/authStore";
 import axios from "axios";
 
-const PARTY_TYPES = ["CONSIGNOR", "CONSIGNEE", "BILLING", "SUPPLIER", "CUSTOMER"];
+const PARTY_TYPES = ["CONSIGNOR", "CONSIGNEE", "SUPPLIER", "CUSTOMER"];
 
 export default function PartiesPage() {
   const { token } = useAuthStore();
@@ -20,7 +20,10 @@ export default function PartiesPage() {
   const [editParty, setEditParty] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [form, setForm] = useState({ name: "", type: "CONSIGNOR", gstin: "", pan: "", address: "", city: "", state: "", pincode: "", contactPerson: "", phone: "", email: "", creditLimit: 0 });
+  const [form, setForm] = useState({ name: "", type: "CONSIGNOR", gstin: "", pan: "", address: "", city: "", state: "", pincode: "", contactPerson: "", phone: "", email: "", creditLimit: 0, creditPeriod: 0 });
+  const [states, setStates] = useState<any[]>([]);
+  const [cities, setCities] = useState<any[]>([]);
+  const [selectedStateId, setSelectedStateId] = useState<string>("");
 
   const headers = { Authorization: `Bearer ${token}` };
 
@@ -37,22 +40,83 @@ export default function PartiesPage() {
 
   useEffect(() => { fetchParties(); }, [fetchParties]);
 
+  // Load states on mount
+  useEffect(() => {
+    if (!token) return;
+    axios.get("/api/states", { headers })
+      .then(({ data }) => setStates(data.states || []))
+      .catch(() => {});
+  }, [token]);
+
+  // Load cities when state changes
+  useEffect(() => {
+    if (!token || !selectedStateId) {
+      setCities([]);
+      return;
+    }
+    axios.get(`/api/cities/${selectedStateId}`, { headers })
+      .then(({ data }) => setCities(data.cities || []))
+      .catch(() => {});
+  }, [selectedStateId, token]);
+
+  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const stateId = e.target.value;
+    setSelectedStateId(stateId);
+    const matchedState = states.find(s => String(s.id) === stateId);
+    setForm(f => ({
+      ...f,
+      state: matchedState ? matchedState.name : "",
+      city: ""
+    }));
+  };
+
   const openModal = (party?: any) => {
     setEditParty(party || null);
     setError("");
     if (party) {
-      setForm({ name: party.name || "", type: party.type || "CONSIGNOR", gstin: party.gstin || "", pan: party.pan || "", address: party.address || "", city: party.city || "", state: party.state || "", pincode: party.pincode || "", contactPerson: party.contactPerson || "", phone: party.phone || "", email: party.email || "", creditLimit: party.creditLimit || 0 });
+      setForm({
+        name: party.name || "",
+        type: party.type || "CONSIGNOR",
+        gstin: party.gstin || "",
+        pan: party.pan || "",
+        address: party.address || "",
+        city: party.city || "",
+        state: party.state || "",
+        pincode: party.pincode || "",
+        contactPerson: party.contactPerson || "",
+        phone: party.phone || "",
+        email: party.email || "",
+        creditLimit: party.creditLimit || 0,
+        creditPeriod: party.creditPeriod || 0
+      });
+      // Match state ID
+      const matchedState = states.find(s => s.name.toLowerCase() === (party.state || "").toLowerCase());
+      if (matchedState) {
+        setSelectedStateId(String(matchedState.id));
+      } else {
+        setSelectedStateId("");
+      }
     } else {
-      setForm({ name: "", type: "CONSIGNOR", gstin: "", pan: "", address: "", city: "", state: "", pincode: "", contactPerson: "", phone: "", email: "", creditLimit: 0 });
+      setForm({ name: "", type: "CONSIGNOR", gstin: "", pan: "", address: "", city: "", state: "", pincode: "", contactPerson: "", phone: "", email: "", creditLimit: 0, creditPeriod: 0 });
+      setSelectedStateId("");
     }
     setModalOpen(true);
   };
 
   const handleSave = async () => {
+    if (!form.type) {
+      setError("Please select at least one party type");
+      return;
+    }
     setSaving(true);
     setError("");
     try {
-      const payload = { ...form, creditLimit: Number(form.creditLimit), email: form.email || undefined };
+      const payload = { 
+        ...form, 
+        creditLimit: Number(form.creditLimit), 
+        creditPeriod: Number(form.creditPeriod) || 0, 
+        email: form.email || undefined 
+      };
       if (editParty) {
         await axios.patch(`/api/parties/${editParty.id}`, payload, { headers });
       } else {
@@ -67,7 +131,19 @@ export default function PartiesPage() {
 
   const columns = [
     { key: "name", label: "Party Name", sortable: true, render: (row: any) => <span className="font-medium text-white">{row.name}</span> },
-    { key: "type", label: "Type", render: (row: any) => <span className="badge badge-blue text-xs">{row.type}</span> },
+    {
+      key: "type",
+      label: "Type",
+      render: (row: any) => (
+        <div className="flex gap-1 flex-wrap">
+          {(row.type || "").split(",").map((t: string) => (
+            <span key={t} className="badge badge-blue text-[10px]">
+              {t.trim()}
+            </span>
+          ))}
+        </div>
+      )
+    },
     { key: "city", label: "City", render: (row: any) => <span className="text-sm text-white/60">{row.city || "—"}</span> },
     { key: "phone", label: "Phone", render: (row: any) => <span className="text-sm text-white/60">{row.phone || "—"}</span> },
     { key: "gstin", label: "GSTIN", render: (row: any) => <span className="font-mono text-xs text-white/40">{row.gstin || "—"}</span> },
@@ -79,7 +155,7 @@ export default function PartiesPage() {
       <div className="flex-between">
         <div>
           <h1 className="page-title flex items-center gap-2"><Users className="w-5 h-5 text-cyan-400" />Parties</h1>
-          <p className="page-subtitle">Manage consignors, consignees, and billing parties</p>
+          <p className="page-subtitle">Manage consignors, consignees, suppliers, and customers</p>
         </div>
         <button onClick={() => openModal()} className="btn-primary"><Plus className="w-4 h-4" />Add Party</button>
       </div>
@@ -127,31 +203,104 @@ export default function PartiesPage() {
       >
         {error && <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">{error}</div>}
         <div className="grid grid-cols-2 gap-4">
-          {([
-            { label: "Party Name *", key: "name", col: 2 },
-            { label: "Type", key: "type", type: "select", options: PARTY_TYPES },
-            { label: "GSTIN", key: "gstin", placeholder: "22AAAAA0000A1Z5" },
-            { label: "PAN", key: "pan", placeholder: "ABCDE1234F" },
-            { label: "Contact Person", key: "contactPerson" },
-            { label: "Phone", key: "phone", placeholder: "+91 98765 43210" },
-            { label: "Email", key: "email", type: "email" },
-            { label: "Credit Limit (₹)", key: "creditLimit", type: "number" },
-            { label: "Address", key: "address", col: 2 },
-            { label: "City", key: "city" },
-            { label: "State", key: "state" },
-            { label: "Pincode", key: "pincode" },
-          ] as any[]).map(({ label, key, type, options, col, placeholder }) => (
-            <div key={key} className={col === 2 ? "col-span-2" : ""}>
-              <label className="label-base">{label}</label>
-              {type === "select" ? (
-                <select value={(form as any)[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} className="select-base">
-                  {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
-                </select>
-              ) : (
-                <input type={type || "text"} value={(form as any)[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} placeholder={placeholder} className="input-base" />
-              )}
+          <div className="col-span-2">
+            <label className="label-base">Party Name *</label>
+            <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Enter party name" className="input-base" required />
+          </div>
+
+          <div className="col-span-2">
+            <label className="label-base mb-1.5">Party Type *</label>
+            <div className="flex gap-4 flex-wrap p-3 rounded-xl bg-white/5 border border-white/10">
+              {PARTY_TYPES.map((t) => {
+                const checked = form.type.split(",").map(x => x.trim()).includes(t);
+                return (
+                  <label key={t} className="flex items-center gap-2 text-sm text-white/80 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) => {
+                        const activeTypes = form.type.split(",").map(x => x.trim()).filter(Boolean);
+                        let nextTypes;
+                        if (e.target.checked) {
+                          nextTypes = [...activeTypes, t];
+                        } else {
+                          nextTypes = activeTypes.filter(x => x !== t);
+                        }
+                        setForm({ ...form, type: nextTypes.join(",") });
+                      }}
+                      className="w-4 h-4 accent-brand-500 rounded border-white/10"
+                    />
+                    {t}
+                  </label>
+                );
+              })}
             </div>
-          ))}
+          </div>
+
+          <div>
+            <label className="label-base">GSTIN</label>
+            <input type="text" value={form.gstin} onChange={(e) => setForm({ ...form, gstin: e.target.value })} placeholder="22AAAAA0000A1Z5" className="input-base" />
+          </div>
+
+          <div>
+            <label className="label-base">PAN</label>
+            <input type="text" value={form.pan} onChange={(e) => setForm({ ...form, pan: e.target.value })} placeholder="ABCDE1234F" className="input-base" />
+          </div>
+
+          <div>
+            <label className="label-base">Contact Person</label>
+            <input type="text" value={form.contactPerson} onChange={(e) => setForm({ ...form, contactPerson: e.target.value })} placeholder="Contact Person Name" className="input-base" />
+          </div>
+
+          <div>
+            <label className="label-base">Phone</label>
+            <input type="text" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+91 98765 43210" className="input-base" />
+          </div>
+
+          <div className="col-span-2">
+            <label className="label-base">Address</label>
+            <input type="text" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Street address" className="input-base" />
+          </div>
+
+          <div>
+            <label className="label-base">State</label>
+            <select value={selectedStateId} onChange={handleStateChange} className="select-base">
+              <option value="">Select State</option>
+              {states.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="label-base">City</label>
+            <select value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="select-base">
+              <option value="">Select City</option>
+              {cities.map((c) => (
+                <option key={c.id} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="label-base">Pincode</label>
+            <input type="text" value={form.pincode} onChange={(e) => setForm({ ...form, pincode: e.target.value })} placeholder="110001" className="input-base" />
+          </div>
+
+          <div>
+            <label className="label-base">Email</label>
+            <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="email@example.com" className="input-base" />
+          </div>
+
+          <div>
+            <label className="label-base">Credit Limit (₹)</label>
+            <input type="number" value={form.creditLimit} onChange={(e) => setForm({ ...form, creditLimit: Number(e.target.value) })} placeholder="0" className="input-base" />
+          </div>
+
+          <div>
+            <label className="label-base">Credit Period (Days)</label>
+            <input type="number" value={form.creditPeriod} onChange={(e) => setForm({ ...form, creditPeriod: Number(e.target.value) })} placeholder="0" className="input-base" />
+          </div>
         </div>
       </Modal>
     </div>

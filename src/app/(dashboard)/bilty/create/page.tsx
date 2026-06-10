@@ -7,6 +7,10 @@ import { FileText, ArrowLeft, ArrowRight, Check, Truck, Users, IndianRupee, Info
 import { useAuthStore } from "@/store/authStore";
 import axios from "axios";
 import Link from "next/link";
+import { Modal } from "@/components/ui/Modal";
+import { VehicleTypeSelect } from "@/components/ui/VehicleTypeSelect";
+import { LocationAutocomplete } from "@/components/ui/LocationAutocomplete";
+import { UnitSelect } from "@/components/ui/UnitSelect";
 
 const STEPS = [
   { id: 1, label: "Route & Vehicle", icon: Truck },
@@ -51,32 +55,71 @@ export default function CreateBiltyPage() {
   const [form, setForm] = useState(DEFAULT_FORM);
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [parties, setParties] = useState<any[]>([]);
+  const [vehicleTypes, setVehicleTypes] = useState<any[]>([]);
+  const [vehicleModalOpen, setVehicleModalOpen] = useState(false);
+  const [newVehicleForm, setNewVehicleForm] = useState({ vehicleNumber: "", ownerType: "Own", vehicleTypeId: "" });
+  const [savingVehicle, setSavingVehicle] = useState(false);
+  const [vehicleError, setVehicleError] = useState("");
+
+  const fetchData = async () => {
+    if (!token) return;
+    const headers = { Authorization: `Bearer ${token}` };
+    try {
+      const [vRes, pRes, vtRes] = await Promise.all([
+        axios.get("/api/vehicles", { headers }),
+        axios.get("/api/parties", { headers }),
+        axios.get("/api/vehicle-types", { headers })
+      ]);
+      setVehicles(vRes.data.vehicles || []);
+      setParties(pRes.data.parties || []);
+      setVehicleTypes(vtRes.data.types || []);
+    } catch (err) {
+      console.error("Failed to load metadata", err);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!token) return;
-      const headers = { Authorization: `Bearer ${token}` };
-      try {
-        const [vRes, pRes] = await Promise.all([
-          axios.get("/api/vehicles", { headers }),
-          axios.get("/api/parties", { headers })
-        ]);
-        setVehicles(vRes.data.vehicles || []);
-        setParties(pRes.data.parties || []);
-      } catch (err) {
-        console.error("Failed to load metadata", err);
-      }
-    };
     fetchData();
   }, [token]);
+
+  const handleQuickAddVehicle = async () => {
+    if (!newVehicleForm.vehicleNumber || !newVehicleForm.vehicleTypeId) {
+      setVehicleError("Please fill all required fields");
+      return;
+    }
+    setSavingVehicle(true);
+    setVehicleError("");
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      const { data } = await axios.post("/api/vehicles", newVehicleForm, { headers });
+      const addedVehicle = data.vehicle;
+      setVehicles((prev) => [addedVehicle, ...prev]);
+      set("vehicleId", addedVehicle.id);
+      setNewVehicleForm({ vehicleNumber: "", ownerType: "Own", vehicleTypeId: "" });
+      setVehicleModalOpen(false);
+    } catch (err: any) {
+      setVehicleError(err.response?.data?.error || "Failed to add vehicle");
+    } finally {
+      setSavingVehicle(false);
+    }
+  };
 
   const set = (key: string, val: any) => {
     setForm((f) => ({ ...f, [key]: val }));
   };
 
-  const consignors = parties.filter(p => p.type === "CONSIGNOR" || p.type === "CUSTOMER");
-  const consignees = parties.filter(p => p.type === "CONSIGNEE" || p.type === "CUSTOMER");
-  const billingParties = parties.filter(p => p.type === "BILLING" || p.type === "CUSTOMER");
+  const consignors = parties.filter(p => {
+    const types = (p.type || "").split(",").map((t: string) => t.trim());
+    return types.includes("CONSIGNOR") || types.includes("CUSTOMER");
+  });
+  const consignees = parties.filter(p => {
+    const types = (p.type || "").split(",").map((t: string) => t.trim());
+    return types.includes("CONSIGNEE") || types.includes("CUSTOMER");
+  });
+  const billingParties = parties.filter(p => {
+    const types = (p.type || "").split(",").map((t: string) => t.trim());
+    return types.includes("CONSIGNOR") || types.includes("CONSIGNEE") || types.includes("CUSTOMER");
+  });
 
   const freightAmount = Number(form.freightAmount) || 0;
   const loadingCharges = Number(form.loadingCharges) || 0;
@@ -170,17 +213,44 @@ export default function CreateBiltyPage() {
           <div className="space-y-4">
             <h3 className="text-base font-semibold text-white mb-4">Route & Vehicle Details</h3>
             <div className="grid grid-cols-2 gap-4">
-              <FieldInput label="From City" value={form.fromCity} onChange={(v: string) => set("fromCity", v)} placeholder="Delhi" required />
-              <FieldInput label="To City" value={form.toCity} onChange={(v: string) => set("toCity", v)} placeholder="Mumbai" required />
+              <div>
+                <label className="label-base">From City <span className="text-red-400 ml-0.5">*</span></label>
+                <LocationAutocomplete value={form.fromCity} onChange={(v: string) => set("fromCity", v)} placeholder="Delhi" required />
+              </div>
+              <div>
+                <label className="label-base">To City <span className="text-red-400 ml-0.5">*</span></label>
+                <LocationAutocomplete value={form.toCity} onChange={(v: string) => set("toCity", v)} placeholder="Mumbai" required />
+              </div>
             </div>
-            <FieldInput label="Via (Optional)" value={form.via} onChange={(v: string) => set("via", v)} placeholder="Pune" />
-            <SelectInput
-              label="Vehicle"
-              value={form.vehicleId}
-              onChange={(v: string) => set("vehicleId", v)}
-              options={vehicles.map(v => ({ value: v.id, label: `${v.vehicleNumber} — ${v.type?.name || ""}` }))}
-              required
-            />
+            <div>
+              <label className="label-base">Via (Optional)</label>
+              <LocationAutocomplete value={form.via || ""} onChange={(v: string) => set("via", v)} placeholder="Pune" />
+            </div>
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="label-base mb-0">Vehicle <span className="text-red-400 ml-0.5">*</span></label>
+                <button
+                  type="button"
+                  onClick={() => setVehicleModalOpen(true)}
+                  className="text-xs text-brand-400 hover:text-brand-300 flex items-center gap-1 font-medium cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Quick Add Vehicle
+                </button>
+              </div>
+              <select
+                value={form.vehicleId}
+                onChange={(e) => set("vehicleId", e.target.value)}
+                className="select-base"
+                required
+              >
+                <option value="">Select...</option>
+                {vehicles.map((v: any) => (
+                  <option key={v.id} value={v.id}>
+                    {v.vehicleNumber} ({v.ownerType || "Own"}) — {v.type?.name || ""}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-start gap-2">
               <Info className="w-4 h-4 text-brand-400 flex-shrink-0 mt-0.5" />
               <p className="text-xs text-white/40">No vehicles? <Link href="/masters/vehicles" className="text-brand-400">Add one in Masters</Link> first.</p>
@@ -221,7 +291,10 @@ export default function CreateBiltyPage() {
             <FieldInput label="Goods Description" value={form.goodsDescription} onChange={(v: string) => set("goodsDescription", v)} placeholder="Electronics, Furniture..." />
             <div className="grid grid-cols-3 gap-3">
               <FieldInput label="Quantity" value={form.quantity} onChange={(v: string) => set("quantity", v)} type="number" placeholder="100" />
-              <FieldInput label="Unit" value={form.unit} onChange={(v: string) => set("unit", v)} placeholder="Box" />
+              <div>
+                <label className="label-base">Unit</label>
+                <UnitSelect value={form.unit} onChange={(v: string) => set("unit", v)} placeholder="Box" />
+              </div>
               <FieldInput label="Weight (Ton)" value={form.weight} onChange={(v: string) => set("weight", v)} type="number" placeholder="5.5" />
             </div>
           </div>
@@ -377,6 +450,56 @@ export default function CreateBiltyPage() {
           </button>
         )}
       </div>
+
+      {/* Quick Add Vehicle Modal */}
+      <Modal
+        open={vehicleModalOpen}
+        onClose={() => setVehicleModalOpen(false)}
+        title="Quick Add Vehicle"
+        subtitle="Register a new vehicle on the fly"
+        footer={
+          <>
+            <button onClick={() => setVehicleModalOpen(false)} className="btn-secondary">Cancel</button>
+            <button onClick={handleQuickAddVehicle} disabled={savingVehicle} className="btn-primary disabled:opacity-60">
+              {savingVehicle ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "Add Vehicle"}
+            </button>
+          </>
+        }
+      >
+        {vehicleError && <div className="mb-4 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">{vehicleError}</div>}
+        <div className="space-y-4">
+          <div>
+            <label className="label-base">Vehicle Number *</label>
+            <input
+              type="text"
+              value={newVehicleForm.vehicleNumber}
+              onChange={(e) => setNewVehicleForm({ ...newVehicleForm, vehicleNumber: e.target.value.toUpperCase() })}
+              placeholder="e.g. MH12AB1234"
+              className="input-base"
+            />
+          </div>
+          <div>
+            <label className="label-base">Owner Type *</label>
+            <select
+              value={newVehicleForm.ownerType}
+              onChange={(e) => setNewVehicleForm({ ...newVehicleForm, ownerType: e.target.value })}
+              className="select-base"
+            >
+              <option value="Own">Own</option>
+              <option value="Market">Market</option>
+            </select>
+          </div>
+          <div>
+            <label className="label-base">Vehicle Type *</label>
+            <VehicleTypeSelect
+              value={newVehicleForm.vehicleTypeId}
+              onChange={(val) => setNewVehicleForm({ ...newVehicleForm, vehicleTypeId: val })}
+              vehicleTypes={vehicleTypes}
+              required
+            />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

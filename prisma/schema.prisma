@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -135,6 +135,7 @@ model VehicleType {
 model Vehicle {
   id              String    @id @default(cuid())
   vehicleNumber   String    @unique
+  ownerType       String    @default("Own")
   vehicleTypeId   String
   make            String?
   model           String?
@@ -216,6 +217,7 @@ model Party {
   phone         String?
   email         String?
   creditLimit   Float    @default(0)
+  creditPeriod  Int      @default(0)
   outstanding   Float    @default(0)
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
@@ -617,5 +619,28 @@ model ContactInquiry {
   status    String   @default("PENDING") // PENDING, RESPONDED, CLOSED
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Country {
+  id     Int     @id @default(autoincrement())
+  iso2   String  @unique
+  name   String
+  states State[]
+}
+
+model State {
+  id        Int     @id @default(autoincrement())
+  countryId Int
+  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  stateCode String
+  name      String
+  cities    City[]
+}
+
+model City {
+  id      Int    @id @default(autoincrement())
+  stateId Int
+  state   State  @relation(fields: [stateId], references: [id], onDelete: Cascade)
+  name    String
 }
 

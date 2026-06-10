@@ -72,7 +72,7 @@ export default function InteractiveShowcase() {
             <span className="w-3 h-3 rounded-full bg-amber-400" />
             <span className="w-3 h-3 rounded-full bg-green-400" />
             <span className="text-[11px] text-slate-400 font-mono ml-3 bg-slate-100 px-3 py-1 rounded border border-slate-200">
-              app.truckbilty.com/dashboard/{activeTab}
+              app.primebilty.com/dashboard/{activeTab}
             </span>
           </div>
           <div className="flex gap-2">
@@ -259,7 +259,7 @@ export default function InteractiveShowcase() {
 
                 {/* Actions */}
                 <div className="flex justify-between items-center">
-                  <span className="text-[9px] text-slate-400">Generated via TruckBilty Invoice Engine</span>
+                  <span className="text-[9px] text-slate-400">Generated via PrimeBilty Invoice Engine</span>
                   <button className="px-3.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 transition-colors text-[10px] font-bold text-white flex items-center gap-1.5 shadow-md shadow-purple-500/10 cursor-pointer">
                     <Download className="w-3.5 h-3.5" />
                     Download Invoice

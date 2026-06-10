@@ -11,14 +11,17 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "TruckBilty — Enterprise Transport Management",
-    template: "%s | TruckBilty",
+    default: "PrimeBilty — Enterprise Transport Management",
+    template: "%s | PrimeBilty",
   },
   description:
-    "TruckBilty is an enterprise-grade Transport Management SaaS for fleet owners, freight brokers, and logistics operators.",
+    "PrimeBilty is an enterprise-grade Transport Management SaaS for fleet owners, freight brokers, and logistics operators.",
   keywords: ["transport management", "bilty", "LR", "freight", "logistics", "ERP"],
-  authors: [{ name: "TruckBilty" }],
+  authors: [{ name: "PrimeBilty" }],
   themeColor: "#050810",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

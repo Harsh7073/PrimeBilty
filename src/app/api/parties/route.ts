@@ -5,7 +5,7 @@ import { z } from "zod";
 
 const partySchema = z.object({
   name: z.string().min(1),
-  type: z.enum(["CONSIGNOR", "CONSIGNEE", "BILLING", "SUPPLIER", "CUSTOMER"]),
+  type: z.string().min(1),
   gstin: z.string().optional(),
   pan: z.string().optional(),
   address: z.string().optional(),
@@ -16,6 +16,7 @@ const partySchema = z.object({
   phone: z.string().optional(),
   email: z.string().email().optional().or(z.literal("")),
   creditLimit: z.number().default(0),
+  creditPeriod: z.number().default(0),
 });
 
 export async function GET(req: NextRequest) {
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * limit;
 
     const where: any = { companyId: payload.companyId, isActive: true };
-    if (type) where.type = type;
+    if (type) where.type = { contains: type };
     if (search) where.OR = [
       { name: { contains: search, mode: "insensitive" } },
       { gstin: { contains: search, mode: "insensitive" } },

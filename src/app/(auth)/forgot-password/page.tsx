@@ -72,10 +72,10 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-dark-900">
       <div
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-40"
         style={{
-          backgroundImage: `radial-gradient(circle at 30% 20%, rgba(59,130,246,0.4) 0%, transparent 50%),
-                            radial-gradient(circle at 70% 80%, rgba(139,92,246,0.3) 0%, transparent 50%)`,
+          backgroundImage: `radial-gradient(circle at 30% 20%, rgba(11,67,149,0.06) 0%, transparent 50%),
+                            radial-gradient(circle at 70% 80%, rgba(244,115,33,0.03) 0%, transparent 50%)`,
         }}
       />
 
@@ -86,10 +86,10 @@ export default function ForgotPasswordPage() {
       >
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-3 mb-8 hover:opacity-90 transition-opacity cursor-pointer group">
-          <div className="w-10 h-10 rounded-2xl flex-center group-hover:scale-105 transition-transform duration-300" style={{ background: "linear-gradient(135deg, #3b82f6, #6366f1)" }}>
-            <Truck className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+            <img src="/logo.png" alt="PrimeBilty Logo" className="w-10 h-10 object-contain" />
           </div>
-          <span className="font-bold text-white text-xl">TruckBilty</span>
+          <span className="font-bold text-brand-500 text-xl">Prime<span className="text-purple-500">Bilty</span></span>
         </Link>
 
         <div className="glass-card p-8">
@@ -97,20 +97,20 @@ export default function ForgotPasswordPage() {
           <div className="flex items-center gap-2 mb-6">
             {[1, 2].map((s) => (
               <div key={s} className="flex items-center gap-2 flex-1">
-                <div className={`w-6 h-6 rounded-full flex-center text-xs font-bold transition-all ${s <= step ? "bg-brand-500 text-white" : "bg-white/10 text-white/30"}`}>{s}</div>
-                <div className={`flex-1 h-0.5 rounded transition-all ${s < step ? "bg-brand-500" : "bg-white/10"}`} />
+                <div className={`w-6 h-6 rounded-full flex-center text-xs font-bold transition-all ${s <= step ? "bg-brand-500 text-white" : "bg-slate-100 text-slate-400"}`}>{s}</div>
+                <div className={`flex-1 h-0.5 rounded transition-all ${s < step ? "bg-brand-500" : "bg-slate-100"}`} />
               </div>
             ))}
-            <div className={`w-6 h-6 rounded-full flex-center text-xs font-bold transition-all ${step === 3 ? "bg-brand-500 text-white" : "bg-white/10 text-white/30"}`}>✓</div>
+            <div className={`w-6 h-6 rounded-full flex-center text-xs font-bold transition-all ${step === 3 ? "bg-brand-500 text-white" : "bg-slate-100 text-slate-400"}`}>✓</div>
           </div>
 
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-white">
+            <h2 className="text-xl font-bold text-slate-800">
               {step === 1 && "Forgot Password?"}
               {step === 2 && "Reset Password"}
               {step === 3 && "All Done!"}
             </h2>
-            <p className="text-white/40 text-sm mt-1">
+            <p className="text-slate-500 text-sm mt-1">
               {step === 1 && "Enter your email or phone number and we'll send you an OTP code to reset your password."}
               {step === 2 && `We've sent a 6-digit OTP code to your registered details.`}
               {step === 3 && "Your password has been updated. You can now log in."}
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
           </div>
 
           {error && (
-            <div className="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+            <div className="mb-4 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-500 text-sm">
               {error}
             </div>
           )}
@@ -128,7 +128,7 @@ export default function ForgotPasswordPage() {
               <div>
                 <label className="label-base">Email or Phone Number</label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
                     type="text"
                     value={identifier}
@@ -154,7 +154,7 @@ export default function ForgotPasswordPage() {
               <div>
                 <label className="label-base">6-Digit OTP Code</label>
                 <div className="relative">
-                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
                     type="text"
                     value={otp}
@@ -182,7 +182,7 @@ export default function ForgotPasswordPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -228,11 +228,11 @@ export default function ForgotPasswordPage() {
           {step === 3 && (
             <div className="space-y-6 text-center">
               <div className="flex justify-center">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                  <ShieldCheck className="w-8 h-8 text-emerald-400" />
+                <div className="w-16 h-16 rounded-full bg-brand-50 border border-brand-100 flex items-center justify-center">
+                  <ShieldCheck className="w-8 h-8 text-brand-500" />
                 </div>
               </div>
-              <p className="text-emerald-400 font-medium text-sm">{successMsg}</p>
+              <p className="text-brand-500 font-medium text-sm">{successMsg}</p>
               <button
                 onClick={() => router.push("/login")}
                 className="btn-primary w-full py-3"
@@ -242,9 +242,9 @@ export default function ForgotPasswordPage() {
             </div>
           )}
 
-          <p className="text-center text-sm text-white/40 mt-6">
+          <p className="text-center text-sm text-slate-500 mt-6">
             Remembered your password?{" "}
-            <Link href="/login" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
+            <Link href="/login" className="text-brand-500 hover:text-brand-600 font-medium transition-colors">
               Sign In
             </Link>
           </p>

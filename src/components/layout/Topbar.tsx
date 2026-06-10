@@ -56,7 +56,7 @@ export function Topbar({ onMenuClick, sidebarCollapsed }: TopbarProps) {
   return (
     <header
       className={cn(
-        "fixed top-0 right-0 z-20 h-16 border-b border-white/10 bg-dark-900/80 backdrop-blur-md flex items-center px-4 gap-3 transition-[left] duration-200 left-0",
+        "fixed top-0 right-0 z-20 h-16 border-b border-slate-200 bg-dark-900/80 backdrop-blur-md flex items-center px-4 gap-3 transition-[left] duration-200 left-0",
         sidebarCollapsed ? "lg:left-[64px]" : "lg:left-[260px]"
       )}
     >
@@ -67,11 +67,11 @@ export function Topbar({ onMenuClick, sidebarCollapsed }: TopbarProps) {
 
       {/* Breadcrumb */}
       <nav className="hidden sm:flex items-center gap-1.5 text-sm flex-1">
-        <Link href="/dashboard" className="text-white/30 hover:text-white/60 transition-colors">Home</Link>
+        <Link href="/dashboard" className="text-slate-400 hover:text-slate-600 transition-colors">Home</Link>
         {crumbs.map((crumb, i) => (
           <span key={crumb} className="flex items-center gap-1.5">
-            <ChevronRight className="w-3.5 h-3.5 text-white/20" />
-            <span className={i === crumbs.length - 1 ? "text-white/80 font-medium" : "text-white/40"}>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
+            <span className={i === crumbs.length - 1 ? "text-slate-800 font-medium" : "text-slate-400"}>
               {breadcrumbMap[crumb] || crumb}
             </span>
           </span>
@@ -91,7 +91,7 @@ export function Topbar({ onMenuClick, sidebarCollapsed }: TopbarProps) {
                 className="overflow-hidden"
               >
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
                     autoFocus
                     value={searchVal}
@@ -131,26 +131,26 @@ export function Topbar({ onMenuClick, sidebarCollapsed }: TopbarProps) {
                   transition={{ duration: 0.15 }}
                   className="absolute right-0 top-10 z-20 glass-card w-80 p-0 overflow-hidden"
                 >
-                  <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
-                    <span className="font-semibold text-sm text-white">Notifications</span>
+                  <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                    <span className="font-semibold text-sm text-slate-800">Notifications</span>
                     <span className="badge badge-blue text-xs">2 new</span>
                   </div>
-                  <div className="divide-y divide-white/5">
+                  <div className="divide-y divide-slate-100">
                     {mockNotifications.map((n) => (
-                      <div key={n.id} className={`px-4 py-3 hover:bg-white/5 transition-colors cursor-pointer ${!n.read ? "bg-brand-500/5" : ""}`}>
+                      <div key={n.id} className={`px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer ${!n.read ? "bg-brand-50/50" : ""}`}>
                         <div className="flex items-start gap-3">
                           <div className={`mt-1.5 ${!n.read ? "status-dot-blue" : "status-dot-gray"} status-dot flex-shrink-0`} />
                           <div>
-                            <div className="text-sm font-medium text-white/90">{n.title}</div>
-                            <div className="text-xs text-white/40 mt-0.5">{n.message}</div>
-                            <div className="text-xs text-white/25 mt-1">{n.time}</div>
+                            <div className="text-sm font-medium text-slate-800">{n.title}</div>
+                            <div className="text-xs text-slate-500 mt-0.5">{n.message}</div>
+                            <div className="text-xs text-slate-400 mt-1">{n.time}</div>
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
-                  <div className="px-4 py-2.5 border-t border-white/10">
-                    <button className="text-xs text-brand-400 hover:text-brand-300 transition-colors">View all notifications</button>
+                  <div className="px-4 py-2.5 border-t border-slate-200">
+                    <button className="text-xs text-brand-500 hover:text-brand-600 transition-colors">View all notifications</button>
                   </div>
                 </motion.div>
               </>
@@ -159,7 +159,7 @@ export function Topbar({ onMenuClick, sidebarCollapsed }: TopbarProps) {
         </div>
 
         {/* User Avatar */}
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-purple-600 flex-center text-xs font-bold cursor-pointer hover:ring-2 hover:ring-brand-500/40 transition-all">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-purple-500 flex-center text-xs font-bold text-white cursor-pointer hover:ring-2 hover:ring-brand-500/40 transition-all">
           {user?.name?.charAt(0)?.toUpperCase() || "U"}
         </div>
       </div>

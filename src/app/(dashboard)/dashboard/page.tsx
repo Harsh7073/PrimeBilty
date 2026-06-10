@@ -17,13 +17,13 @@ import Link from "next/link";
 import axios from "axios";
 import { useAuthStore } from "@/store/authStore";
 
-const COLORS = ["#3b82f6", "#8b5cf6", "#06b6d4", "#10b981", "#f59e0b"];
+const COLORS = ["#0b4395", "#f47321", "#94bbeb", "#ffa971", "#09377a"];
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="custom-tooltip">
-        <p className="text-xs text-white/50 mb-1">{label}</p>
+        <p className="text-xs text-slate-400 mb-1">{label}</p>
         {payload.map((p: any, i: number) => (
           <p key={i} className="text-sm font-semibold" style={{ color: p.color }}>
             {p.name}: {p.name === "revenue" ? formatCurrency(p.value) : p.value}
@@ -82,7 +82,7 @@ export default function DashboardPage() {
           <h1 className="page-title flex items-center gap-2">
             Dashboard
             {data?.isSuperAdmin && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded bg-brand-500/20 border border-brand-500/30 text-brand-400 uppercase tracking-wider animate-pulse">
+              <span className="text-xs font-semibold px-2 py-0.5 rounded bg-brand-50 border border-brand-200 text-brand-500 uppercase tracking-wider animate-pulse">
                 Super Admin
               </span>
             )}
@@ -117,8 +117,8 @@ export default function DashboardPage() {
               value={stats?.totalBilties ?? 0}
               trend={stats?.biltyGrowth}
               trendLabel="vs last month"
-              icon={<FileText className="w-5 h-5 text-brand-400" />}
-              gradient="bg-brand-500/15"
+              icon={<FileText className="w-5 h-5 text-brand-500" />}
+              gradient="bg-brand-50"
               delay={0}
             />
             {data?.isSuperAdmin ? (
@@ -127,16 +127,16 @@ export default function DashboardPage() {
                   title="Total Companies"
                   value={stats?.totalCompanies ?? 0}
                   subtitle="System partners"
-                  icon={<Layers className="w-5 h-5 text-cyan-400" />}
-                  gradient="bg-cyan-500/15"
+                  icon={<Layers className="w-5 h-5 text-brand-500" />}
+                  gradient="bg-brand-50"
                   delay={0.05}
                 />
                 <StatCard
                   title="Total Active Users"
                   value={stats?.totalUsers ?? 0}
                   subtitle="All accounts"
-                  icon={<Users className="w-5 h-5 text-purple-400" />}
-                  gradient="bg-purple-500/15"
+                  icon={<Users className="w-5 h-5 text-purple-500" />}
+                  gradient="bg-purple-50"
                   delay={0.1}
                 />
               </>
@@ -146,16 +146,16 @@ export default function DashboardPage() {
                   title="Active Trips"
                   value={stats?.activeBilties ?? 0}
                   subtitle={`${stats?.inTransitBilties ?? 0} in transit`}
-                  icon={<Activity className="w-5 h-5 text-cyan-400" />}
-                  gradient="bg-cyan-500/15"
+                  icon={<Activity className="w-5 h-5 text-brand-500" />}
+                  gradient="bg-brand-50"
                   delay={0.05}
                 />
                 <StatCard
                   title="Total Vehicles"
                   value={stats?.totalVehicles ?? 0}
                   subtitle={`${stats?.vehicleUtilization ?? 0}% utilization`}
-                  icon={<Truck className="w-5 h-5 text-purple-400" />}
-                  gradient="bg-purple-500/15"
+                  icon={<Truck className="w-5 h-5 text-purple-500" />}
+                  gradient="bg-purple-50"
                   delay={0.1}
                 />
               </>
@@ -163,8 +163,8 @@ export default function DashboardPage() {
             <StatCard
               title="Pending Invoices"
               value={stats?.pendingInvoices ?? 0}
-              icon={<Clock className="w-5 h-5 text-amber-400" />}
-              gradient="bg-amber-500/15"
+              icon={<Clock className="w-5 h-5 text-purple-500" />}
+              gradient="bg-purple-50"
               delay={0.15}
             />
             <StatCard
@@ -172,16 +172,16 @@ export default function DashboardPage() {
               value={formatCurrency(stats?.monthlyRevenue ?? 0)}
               trend={stats?.revenueGrowth}
               trendLabel="vs last month"
-              icon={<TrendingUp className="w-5 h-5 text-emerald-400" />}
-              gradient="bg-emerald-500/15"
+              icon={<TrendingUp className="w-5 h-5 text-brand-500" />}
+              gradient="bg-brand-50"
               delay={0.2}
             />
             <StatCard
               title="Total Revenue"
               value={formatCurrency(stats?.totalRevenue ?? 0)}
               subtitle="All time"
-              icon={<Receipt className="w-5 h-5 text-pink-400" />}
-              gradient="bg-pink-500/15"
+              icon={<Receipt className="w-5 h-5 text-brand-500" />}
+              gradient="bg-brand-50"
               delay={0.25}
             />
           </>
@@ -199,14 +199,14 @@ export default function DashboardPage() {
         >
           <div className="flex-between mb-5">
             <div>
-              <h3 className="font-semibold text-white">Revenue & Bilties</h3>
+              <h3 className="font-semibold text-slate-800">Revenue & Bilties</h3>
               <p className="text-xs text-muted mt-0.5">Last 6 months performance</p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1.5 text-xs text-white/40">
+              <span className="flex items-center gap-1.5 text-xs text-slate-400">
                 <span className="w-2 h-2 rounded-full bg-brand-500" />Revenue
               </span>
-              <span className="flex items-center gap-1.5 text-xs text-white/40">
+              <span className="flex items-center gap-1.5 text-xs text-slate-400">
                 <span className="w-2 h-2 rounded-full bg-purple-500" />Bilties
               </span>
             </div>
@@ -218,20 +218,20 @@ export default function DashboardPage() {
               <AreaChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                 <defs>
                   <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#0b4395" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#0b4395" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="biltyGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#f47321" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#f47321" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(15, 23, 42, 0.06)" />
                 <XAxis dataKey="month" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="revenue" name="revenue" stroke="#3b82f6" fill="url(#revGrad)" strokeWidth={2} />
-                <Area type="monotone" dataKey="bilties" name="bilties" stroke="#8b5cf6" fill="url(#biltyGrad)" strokeWidth={2} />
+                <Area type="monotone" dataKey="revenue" name="revenue" stroke="#0b4395" fill="url(#revGrad)" strokeWidth={2} />
+                <Area type="monotone" dataKey="bilties" name="bilties" stroke="#f47321" fill="url(#biltyGrad)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           )}
@@ -245,7 +245,7 @@ export default function DashboardPage() {
           className="glass-card p-5"
         >
           <div className="mb-4">
-            <h3 className="font-semibold text-white">Fleet Status</h3>
+            <h3 className="font-semibold text-slate-800">Fleet Status</h3>
             <p className="text-xs text-muted mt-0.5">Vehicle utilization</p>
           </div>
           {loading ? (
@@ -271,12 +271,12 @@ export default function DashboardPage() {
                 </PieChart>
               </ResponsiveContainer>
               <div className="text-center -mt-2">
-                <div className="text-2xl font-bold gradient-text">{stats?.vehicleUtilization ?? 0}%</div>
+                <div className="text-2xl font-bold bg-gradient-to-r from-brand-500 to-purple-500 bg-clip-text text-transparent">{stats?.vehicleUtilization ?? 0}%</div>
                 <div className="text-xs text-muted">Fleet Active</div>
               </div>
               <div className="flex gap-3 mt-3">
                 {vehiclePieData.map((entry, i) => (
-                  <div key={entry.name} className="flex items-center gap-1.5 text-xs text-white/40">
+                  <div key={entry.name} className="flex items-center gap-1.5 text-xs text-slate-400">
                     <span className="w-2 h-2 rounded-full" style={{ background: COLORS[i] }} />
                     {entry.name}: {entry.value}
                   </div>
@@ -297,17 +297,17 @@ export default function DashboardPage() {
           className="glass-card p-5"
         >
           <div className="mb-4">
-            <h3 className="font-semibold text-white">Monthly Bilty Trend</h3>
+            <h3 className="font-semibold text-slate-800">Monthly Bilty Trend</h3>
             <p className="text-xs text-muted mt-0.5">LR count by month</p>
           </div>
           {loading ? <div className="shimmer h-48 rounded-xl" /> : (
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(15, 23, 42, 0.06)" />
                 <XAxis dataKey="month" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="bilties" name="bilties" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="bilties" name="bilties" fill="#0b4395" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -321,7 +321,7 @@ export default function DashboardPage() {
           className="glass-card p-5"
         >
           <div className="mb-4">
-            <h3 className="font-semibold text-white">Bilty Status Breakdown</h3>
+            <h3 className="font-semibold text-slate-800">Bilty Status Breakdown</h3>
             <p className="text-xs text-muted mt-0.5">Current bilty states</p>
           </div>
           {loading ? <div className="shimmer h-48 rounded-xl" /> : (
@@ -340,8 +340,8 @@ export default function DashboardPage() {
                   <div key={entry.name} className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-sm" style={{ background: COLORS[i] }} />
                     <div>
-                      <div className="text-xs text-white/50">{entry.name}</div>
-                      <div className="text-sm font-semibold text-white">{entry.value}</div>
+                      <div className="text-xs text-slate-500">{entry.name}</div>
+                      <div className="text-sm font-semibold text-slate-800">{entry.value}</div>
                     </div>
                   </div>
                 ))}
@@ -362,10 +362,10 @@ export default function DashboardPage() {
         >
           <div className="flex-between mb-4">
             <div>
-              <h3 className="font-semibold text-white">Recent Bilties</h3>
+              <h3 className="font-semibold text-slate-800">Recent Bilties</h3>
               <p className="text-xs text-muted mt-0.5">Latest LR entries</p>
             </div>
-            <Link href="/bilty" className="text-xs text-brand-400 hover:text-brand-300 flex items-center gap-1">
+            <Link href="/bilty" className="text-xs text-brand-500 hover:text-brand-600 flex items-center gap-1">
               View all <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -376,21 +376,21 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : recentBilties.length === 0 ? (
-            <div className="flex flex-col items-center py-10 text-white/30 gap-2">
+            <div className="flex flex-col items-center py-10 text-slate-400 gap-2">
               <FileText className="w-8 h-8" />
-              <p className="text-sm">No bilties yet. <Link href="/bilty/create" className="text-brand-400">Create one</Link></p>
+              <p className="text-sm">No bilties yet. <Link href="/bilty/create" className="text-brand-500 hover:text-brand-600">Create one</Link></p>
             </div>
           ) : (
             <div className="space-y-2">
               {recentBilties.map((bilty: any) => (
                 <Link key={bilty.id} href={`/bilty/${bilty.id}`}>
-                  <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10">
-                    <div className="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/20 flex-center flex-shrink-0">
-                      <FileText className="w-4 h-4 text-brand-400" />
+                  <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer border border-transparent hover:border-slate-200">
+                    <div className="w-8 h-8 rounded-lg bg-brand-50 border border-brand-100 flex-center flex-shrink-0">
+                      <FileText className="w-4 h-4 text-brand-500" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-white">{bilty.lrNumber}</span>
+                        <span className="text-sm font-medium text-slate-800">{bilty.lrNumber}</span>
                         <span className={`badge text-xs ${getStatusColor(bilty.status)}`}>{bilty.status.replace("_", " ")}</span>
                       </div>
                       <div className="text-xs text-muted truncate">
@@ -398,7 +398,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="text-sm font-semibold text-white">{formatCurrency(bilty.totalAmount)}</div>
+                      <div className="text-sm font-semibold text-slate-800">{formatCurrency(bilty.totalAmount)}</div>
                       <div className="text-xs text-muted">{formatDate(bilty.createdAt)}</div>
                     </div>
                   </div>
@@ -415,23 +415,23 @@ export default function DashboardPage() {
           transition={{ delay: 0.55 }}
           className="glass-card p-5"
         >
-          <h3 className="font-semibold text-white mb-4">Quick Actions</h3>
+          <h3 className="font-semibold text-slate-800 mb-4">Quick Actions</h3>
           <div className="space-y-2">
             {[
-              { href: "/bilty/create", icon: FileText, label: "Create Bilty", color: "text-brand-400", bg: "bg-brand-500/10" },
-              { href: "/invoices/create", icon: Receipt, label: "New Invoice", color: "text-purple-400", bg: "bg-purple-500/10" },
-              { href: "/masters/vehicles", icon: Truck, label: "Add Vehicle", color: "text-cyan-400", bg: "bg-cyan-500/10" },
-              { href: "/masters/parties", icon: Activity, label: "Add Party", color: "text-emerald-400", bg: "bg-emerald-500/10" },
-              { href: "/reports", icon: BarChart2, label: "View Reports", color: "text-amber-400", bg: "bg-amber-500/10" },
-              { href: "/accounting", icon: TrendingUp, label: "Accounting", color: "text-pink-400", bg: "bg-pink-500/10" },
+              { href: "/bilty/create", icon: FileText, label: "Create Bilty", color: "text-brand-500", bg: "bg-brand-50" },
+              { href: "/invoices/create", icon: Receipt, label: "New Invoice", color: "text-purple-500", bg: "bg-purple-50" },
+              { href: "/masters/vehicles", icon: Truck, label: "Add Vehicle", color: "text-brand-500", bg: "bg-brand-50" },
+              { href: "/masters/parties", icon: Activity, label: "Add Party", color: "text-purple-500", bg: "bg-purple-50" },
+              { href: "/reports", icon: BarChart2, label: "View Reports", color: "text-brand-500", bg: "bg-brand-50" },
+              { href: "/accounting", icon: TrendingUp, label: "Accounting", color: "text-purple-500", bg: "bg-purple-50" },
             ].map(({ href, icon: Icon, label, color, bg }) => (
               <Link key={href} href={href}>
-                <div className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-all group cursor-pointer">
+                <div className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-all group cursor-pointer">
                   <div className={`w-8 h-8 rounded-lg ${bg} flex-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
                     <Icon className={`w-4 h-4 ${color}`} />
                   </div>
-                  <span className="text-sm text-white/60 group-hover:text-white/90 transition-colors">{label}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-white/20 ml-auto group-hover:text-white/40 group-hover:translate-x-0.5 transition-all" />
+                  <span className="text-sm text-slate-600 group-hover:text-slate-800 transition-colors">{label}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-300 ml-auto group-hover:text-slate-400 group-hover:translate-x-0.5 transition-all" />
                 </div>
               </Link>
             ))}

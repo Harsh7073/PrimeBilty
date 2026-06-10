@@ -87,9 +87,9 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 py-5 border-b border-white/10">
-        <div className="w-8 h-8 rounded-xl bg-gradient-brand flex-center flex-shrink-0" style={{ background: "linear-gradient(135deg, #3b82f6, #6366f1)" }}>
-          <Truck className="w-4 h-4 text-white" />
+      <div className="flex items-center gap-3 px-4 py-5 border-b border-slate-200">
+        <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
+          <img src="/logo.png" alt="PrimeBilty Logo" className="w-8 h-8 object-contain" />
         </div>
         <AnimatePresence>
           {!collapsed && (
@@ -99,8 +99,8 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
               exit={{ opacity: 0, width: 0 }}
               className="overflow-hidden"
             >
-              <span className="font-bold text-white text-base whitespace-nowrap">TruckBilty</span>
-              <div className="text-[10px] text-white/30 font-medium -mt-0.5">Enterprise TMS</div>
+              <span className="font-bold text-brand-500 text-base whitespace-nowrap">Prime<span className="text-purple-500">Bilty</span></span>
+              <div className="text-[10px] text-slate-400 font-medium -mt-0.5">Enterprise TMS</div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -126,7 +126,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
                 return (
                   <Link key={item.href} href={item.href} onClick={onMobileClose}>
                     <div className={cn("sidebar-link", active && "active")} title={collapsed ? item.label : undefined}>
-                      <item.icon className={cn("w-4 h-4 flex-shrink-0 sidebar-icon", active ? "text-brand-400" : "text-white/40")} />
+                      <item.icon className={cn("w-4 h-4 flex-shrink-0 sidebar-icon", active ? "text-brand-500" : "text-slate-400")} />
                       <AnimatePresence>
                         {!collapsed && (
                           <motion.span
@@ -152,9 +152,9 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       </nav>
 
       {/* User Footer */}
-      <div className="border-t border-white/10 p-3">
+      <div className="border-t border-slate-200 p-3">
         <div className={cn("flex items-center gap-3 px-2 py-2 rounded-xl", !collapsed && "")}>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-purple-600 flex-center flex-shrink-0 text-xs font-bold">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-purple-500 flex-center flex-shrink-0 text-xs font-bold text-white">
             {user?.name?.charAt(0)?.toUpperCase() || "U"}
           </div>
           <AnimatePresence>
@@ -165,8 +165,8 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
                 exit={{ opacity: 0 }}
                 className="flex-1 overflow-hidden"
               >
-                <div className="text-sm font-medium text-white truncate">{user?.name}</div>
-                <div className="text-xs text-white/30 truncate">{user?.roleName}</div>
+                <div className="text-sm font-medium text-slate-800 truncate">{user?.name}</div>
+                <div className="text-xs text-slate-400 truncate">{user?.roleName}</div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -190,8 +190,8 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       <motion.aside
         animate={{ width: collapsed ? 64 : 260 }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="hidden lg:flex flex-col fixed left-0 top-0 h-screen z-30 border-r border-white/10 bg-dark-900 overflow-hidden"
-        style={{ boxShadow: "4px 0 24px rgba(0,0,0,0.3)" }}
+        className="hidden lg:flex flex-col fixed left-0 top-0 h-screen z-30 border-r border-slate-200 bg-dark-900 overflow-hidden"
+        style={{ boxShadow: "1px 0 10px rgba(15, 23, 42, 0.04)" }}
       >
         <SidebarContent />
       </motion.aside>
@@ -204,7 +204,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
+              className="lg:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
               onClick={onMobileClose}
             />
             <motion.aside
@@ -212,7 +212,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="lg:hidden fixed left-0 top-0 h-screen w-64 z-50 border-r border-white/10 bg-dark-900"
+              className="lg:hidden fixed left-0 top-0 h-screen w-64 z-50 border-r border-slate-200 bg-dark-900"
             >
               <button
                 onClick={onMobileClose}

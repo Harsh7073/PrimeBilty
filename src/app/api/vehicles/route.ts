@@ -5,6 +5,7 @@ import { z } from "zod";
 
 const vehicleSchema = z.object({
   vehicleNumber: z.string().min(1),
+  ownerType: z.enum(["Own", "Market"]).default("Own"),
   vehicleTypeId: z.string(),
   make: z.string().optional(),
   model: z.string().optional(),
