@@ -181,25 +181,16 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
           )}
         </div>
       </div>
-
-      {/* Designer Credit */}
-      <AnimatePresence>
-        {!collapsed && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="px-4 pb-3 text-center"
-          >
-            <p className="text-[10px] text-slate-400 leading-tight">
-              Designed &amp; Built by{" "}
-              <span className="font-semibold bg-gradient-to-r from-brand-500 to-purple-500 bg-clip-text text-transparent">
-                Harsh Suthar
-              </span>
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {!collapsed && (
+        <div className="px-4 pb-3 text-center">
+          <p className="text-[10px] text-slate-400 leading-tight">
+            Designed &amp; Built by{" "}
+            <span className="font-semibold bg-gradient-to-r from-brand-500 to-purple-500 bg-clip-text text-transparent">
+              Harsh Suthar
+            </span>
+          </p>
+        </div>
+      )}
     </div>
   );
 
